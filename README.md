@@ -2,7 +2,7 @@
 
 **CS 2114 | Project 3 | Deliverable 3 — First Prototype**
 
-**Team:** Lovesh Kataria (Model), Amelia (View), Ari (Controller)
+**Team:** Lovesh Kataria (Model), Amelia Vasquez Rosario (View), Ari (Controller)
 
 ## Overview
 
@@ -29,6 +29,14 @@ The tests cover the Queue, customer generation, clothing, outfits, dialogue, sco
 ### View and Controller
 
 **[AMELIA / ARI — Add application entry point, launch instructions, and dependencies.]**
+
+The View is in purrfectfit.view (or, purrfectfit/view if you consider the folders)
+and it's dependent on the Controller, as the Controller communicated with the
+Model and translates that information for the View to display.
+
+The View can be run/started up through Maven via:
+
+ `mvn exec:java`
 
 ---
 
@@ -67,7 +75,7 @@ The Controller is responsible for passing player actions to the Model and updati
 
 - External AI dialogue is not implemented; fallback dialogue is available.
 - Model tests are reported passing.
-- **[AMELIA — View features still missing]**
+- Missing some digitally hand-drawn visuals/images, fonts, mand music.
 - **[ARI — Controller features still missing]**
 - **[TEAM — End-to-end MVP test results and unresolved crashes]**
 - **[TEAM — Scope bad-input cases tested through the GUI]**
@@ -187,7 +195,8 @@ The player can request an additional AI-generated clue about the active customer
 
 **Lovesh:** Used GenAI to make sure code is consistent with each other and everything in rubric is followed.
 
-**Amelia:** [TO COMPLETE]
+**Amelia:** Used GenAI to help with the creation of temporary simple view files
+in order for the first Prototype to be visually assessed through the view.
 
 **Ari:** [TO COMPLETE]
 
