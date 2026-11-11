@@ -7,7 +7,7 @@ import java.util.function.LongSupplier;
  * Manages the gameplay state of Purrfect Fit.
  *
  * Controls levels, the customer queue, outfit submissions,
- * scoring, timing, and progression.
+ * scoring, timing, and progression independently of the view.
  *
  * @author Lovesh Kataria
  * @version 11.11.2026
@@ -25,18 +25,20 @@ public class GameModel
     private int completedOutfits;
     private int minimumOutfits;
     private int timeLimitSeconds;
+    private int finalRemainingTime;
+
     private long levelStartTime;
+    private long totalPausedNanos;
 
     private final LinkedQueue<Customer> customers;
     private final CustomerGenerator customerGenerator;
     private final LongSupplier nanoTimeSource;
 
     private GameStatus status;
-    private long totalPausedNanos;
 
 
     /**
-     * Creates a game model with standard customer generation
+     * Creates a game model using standard customer generation
      * and the system's monotonic clock.
      */
     public GameModel()
@@ -51,7 +53,7 @@ public class GameModel
      * @param generator
      *            the customer generator
      * @param timeSource
-     *            the source of monotonic time in nanoseconds
+     *            the monotonic clock in nanoseconds
      * @throws IllegalArgumentException
      *             if either dependency is null
      */
@@ -75,6 +77,7 @@ public class GameModel
         completedOutfits = 0;
         minimumOutfits = 0;
         timeLimitSeconds = 0;
+        finalRemainingTime = 0;
         levelStartTime = 0L;
         totalPausedNanos = 0L;
 
@@ -83,41 +86,18 @@ public class GameModel
 
 
     /**
-     * Starts a valid level and prepares its initial customers.
+     * Starts the first level of a new game.
      *
-     * The first customer's dialogue is prepared before
-     * the countdown begins.
+     * Subsequent levels must be started through nextLevel().
+     * Failed levels must be restarted through retryLevel().
      *
      * @param level
-     *            the level number to start
-     * @return true if the level starts successfully
+     *            the level number, which must be 1
+     * @return true if the first level starts successfully
      */
     public boolean startLevel(int level)
     {
-        if (level < 1 || level > MAX_LEVEL)
-        {
-            return false;
-        }
-
-        if (status == GameStatus.RUNNING
-            || status == GameStatus.FINISHED)
-        {
-            return false;
-        }
-
-        if (status == GameStatus.NOT_STARTED && level != 1)
-        {
-            return false;
-        }
-
-        if (status == GameStatus.PASSED
-            && level != currentLevel + 1)
-        {
-            return false;
-        }
-
-        if (status == GameStatus.FAILED
-            && level != currentLevel)
+        if (status != GameStatus.NOT_STARTED || level != 1)
         {
             return false;
         }
@@ -128,10 +108,11 @@ public class GameModel
 
 
     /**
-     * Submits an outfit for the current customer.
+     * Submits an outfit for the active customer.
      *
-     * Correct submissions award temporary points and
-     * advance the FIFO queue.
+     * Invalid selections do not affect scoring or the queue.
+     * A submission at the exact deadline is accepted while
+     * the level remains running.
      *
      * @param selectedOutfit
      *            the outfit selected by the player
@@ -144,10 +125,12 @@ public class GameModel
             return SubmissionResult.EXPIRED;
         }
 
-        updateTime();
+        long submissionTime = nanoTimeSource.getAsLong();
 
-        if (status != GameStatus.RUNNING)
+        if (getElapsedNanos(submissionTime)
+            > (long)timeLimitSeconds * NANOS_PER_SECOND)
         {
+            finishLevel();
             return SubmissionResult.EXPIRED;
         }
 
@@ -156,9 +139,9 @@ public class GameModel
             return SubmissionResult.INVALID;
         }
 
-        Customer currentCustomer = getCurrentCustomer();
+        Customer currentCustomer = customers.peek();
 
-        if (currentCustomer == null)
+        if (!isValidSelection(selectedOutfit, currentCustomer))
         {
             return SubmissionResult.INVALID;
         }
@@ -182,9 +165,59 @@ public class GameModel
 
 
     /**
+     * Determines whether an outfit uses clothing choices
+     * displayed for the current customer.
+     *
+     * @param outfit
+     *            the submitted outfit
+     * @param customer
+     *            the current customer
+     * @return true if all selected items are available
+     */
+    private boolean isValidSelection(
+        Outfit outfit,
+        Customer customer)
+    {
+        if (outfit == null || customer == null)
+        {
+            return false;
+        }
+
+        ClothingItem[][] options = customer.getAvailableOptions();
+
+        ClothingItem[] selected = {
+            outfit.getHat(),
+            outfit.getTop(),
+            outfit.getShoes()
+        };
+
+        for (int category = 0; category < selected.length; category++)
+        {
+            boolean found = false;
+
+            for (int i = 0; i < options[category].length; i++)
+            {
+                if (selected[category] == options[category][i])
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    /**
      * Returns the customer at the front of the queue.
      *
-     * @return the current customer, or null if unavailable
+     * @return the current customer, or null if inactive
      */
     public Customer getCurrentCustomer()
     {
@@ -201,24 +234,32 @@ public class GameModel
     /**
      * Returns the remaining level time in seconds.
      *
+     * The last recorded value is preserved when the
+     * level is no longer running.
+     *
      * @return the remaining time, never below zero
      */
     public int getRemainingTime()
     {
         if (status != GameStatus.RUNNING)
         {
-            return 0;
+            return finalRemainingTime;
         }
 
-        long elapsedNanos =
-            nanoTimeSource.getAsLong()
-                - levelStartTime
-                - totalPausedNanos;
+        return calculateRemainingTime(nanoTimeSource.getAsLong());
+    }
 
-        if (elapsedNanos < 0)
-        {
-            elapsedNanos = 0;
-        }
+
+    /**
+     * Calculates remaining time using a clock reading.
+     *
+     * @param now
+     *            the current monotonic time in nanoseconds
+     * @return remaining seconds, rounded upward
+     */
+    private int calculateRemainingTime(long now)
+    {
+        long elapsedNanos = getElapsedNanos(now);
 
         long remainingNanos =
             (long)timeLimitSeconds * NANOS_PER_SECOND
@@ -236,7 +277,23 @@ public class GameModel
 
 
     /**
-     * Returns the minimum outfits needed to pass.
+     * Calculates active gameplay time, excluding time spent
+     * preparing customer dialogue.
+     *
+     * @param now
+     *            the current monotonic time in nanoseconds
+     * @return elapsed gameplay time in nanoseconds
+     */
+    private long getElapsedNanos(long now)
+    {
+        return Math.max(
+            0L,
+            now - levelStartTime - totalPausedNanos);
+    }
+
+
+    /**
+     * Returns the minimum outfits required for the level.
      *
      * @return the minimum outfit requirement
      */
@@ -247,9 +304,9 @@ public class GameModel
 
 
     /**
-     * Returns the number of completed outfits.
+     * Returns the number of correctly completed outfits.
      *
-     * @return the number of correctly completed outfits
+     * @return the completed outfit count
      */
     public int getCompletedOutfits()
     {
@@ -293,7 +350,7 @@ public class GameModel
     /**
      * Returns the current game status.
      *
-     * @return the current game status
+     * @return the game status
      */
     public GameStatus getStatus()
     {
@@ -302,10 +359,11 @@ public class GameModel
 
 
     /**
-     * Checks whether the level timer has expired.
+     * Checks whether the current level has expired.
      *
-     * When time expires, the level is passed if enough
-     * outfits were completed. Otherwise, it is failed.
+     * The level finishes when its time limit is reached.
+     * Submissions are evaluated separately so a submission
+     * at the exact deadline can still be accepted.
      */
     public void updateTime()
     {
@@ -314,10 +372,32 @@ public class GameModel
             return;
         }
 
-        if (getRemainingTime() > 0)
+        long now = nanoTimeSource.getAsLong();
+
+        if (getElapsedNanos(now)
+            >= (long)timeLimitSeconds * NANOS_PER_SECOND)
+        {
+            finishLevel();
+        }
+    }
+
+
+    /**
+     * Finalizes the current level based on the number
+     * of completed outfits.
+     *
+     * Passing commits temporary points to the total.
+     * Failing discards temporary points.
+     */
+    private void finishLevel()
+    {
+        if (status != GameStatus.RUNNING)
         {
             return;
         }
+
+        finalRemainingTime =
+            calculateRemainingTime(nanoTimeSource.getAsLong());
 
         if (completedOutfits >= minimumOutfits)
         {
@@ -335,7 +415,10 @@ public class GameModel
     /**
      * Restarts the current level after failure.
      *
-     * @return true if the level was restarted
+     * Generates fresh customers and resets temporary
+     * progress without changing the cumulative score.
+     *
+     * @return true if the level restarts successfully
      */
     public boolean retryLevel()
     {
@@ -350,12 +433,11 @@ public class GameModel
 
 
     /**
-     * Advances to the next level after passing.
+     * Advances after a successfully completed level.
      *
-     * Passing Level 15 allows the player to finish
-     * the game by selecting Next.
+     * After Level 15, progression ends the game.
      *
-     * @return true if progression was successful
+     * @return true if progression succeeds
      */
     public boolean nextLevel()
     {
@@ -378,14 +460,14 @@ public class GameModel
     /**
      * Ends the game session.
      *
-     * Discards unfinished level points while preserving
+     * Discards unfinished level points and preserves
      * the cumulative score from previously passed levels.
      */
     public void exitGame()
     {
-        if (status == GameStatus.RUNNING
-            || status == GameStatus.FAILED)
+        if (status == GameStatus.RUNNING)
         {
+            finalRemainingTime = getRemainingTime();
             levelScore = 0;
         }
 
@@ -394,13 +476,13 @@ public class GameModel
 
 
     /**
-     * Initializes the settings, progress, and queue
-     * for the specified level.
+     * Initializes the specified level with a fresh queue,
+     * level settings, and temporary progress.
      *
-     * Prepares initial dialogue before starting the clock.
+     * Initial dialogue is prepared before the clock starts.
      *
      * @param level
-     *            the level to initialize
+     *            the level number to initialize
      */
     private void initializeLevel(int level)
     {
@@ -410,6 +492,7 @@ public class GameModel
 
         minimumOutfits = calculateMinimumOutfits(level);
         timeLimitSeconds = calculateTimeLimit(level);
+        finalRemainingTime = 0;
 
         while (!customers.isEmpty())
         {
@@ -421,10 +504,8 @@ public class GameModel
             customers.enqueue(customerGenerator.generateCustomer());
         }
 
-        // Prepare initial dialogue before the countdown starts.
         customerGenerator.prepareDialogue(customers.peek());
 
-        // Reset timing for this level only.
         totalPausedNanos = 0L;
         levelStartTime = nanoTimeSource.getAsLong();
 
@@ -433,10 +514,10 @@ public class GameModel
 
 
     /**
-     * Prepares dialogue for the front customer.
+     * Prepares dialogue when a new customer reaches
+     * the front of the queue.
      *
-     * The time spent generating dialogue is excluded
-     * from the active level countdown.
+     * Dialogue preparation time is excluded from gameplay.
      */
     private void prepareCurrentCustomerDialogue()
     {
@@ -467,11 +548,11 @@ public class GameModel
 
 
     /**
-     * Calculates the minimum outfits required for a level.
+     * Calculates the minimum outfits for a level.
      *
      * @param level
      *            the level number
-     * @return the minimum number of outfits
+     * @return the minimum required outfits
      */
     private int calculateMinimumOutfits(int level)
     {
@@ -480,14 +561,13 @@ public class GameModel
 
 
     /**
-     * Calculates the time limit using the approved
-     * 15-level progression formula.
+     * Calculates the approved time limit for a level.
      *
      * @param level
      *            the level number from 1 to 15
      * @return the time limit in seconds
      * @throws IllegalArgumentException
-     *             if the level is outside 1 to 15
+     *             if the level is outside the valid range
      */
     private int calculateTimeLimit(int level)
     {

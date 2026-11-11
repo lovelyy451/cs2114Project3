@@ -48,27 +48,27 @@ public class ClothingCatalog
         this.random = random;
 
         hats = new ClothingItem[] {
-            new ClothingItem("Sample Red Hat", ClothingCategory.HAT),
-            new ClothingItem("Sample Blue Hat", ClothingCategory.HAT),
-            new ClothingItem("Sample Green Hat", ClothingCategory.HAT),
-            new ClothingItem("Sample Yellow Hat", ClothingCategory.HAT),
-            new ClothingItem("Sample Black Hat", ClothingCategory.HAT)
+            new ClothingItem("Crown", ClothingCategory.HAT),
+            new ClothingItem("Top Hat", ClothingCategory.HAT),
+            new ClothingItem("Bow", ClothingCategory.HAT),
+            new ClothingItem("Sun Hat", ClothingCategory.HAT),
+            new ClothingItem("Cap", ClothingCategory.HAT)
         };
 
         tops = new ClothingItem[] {
-            new ClothingItem("Sample Red Shirt", ClothingCategory.TOP),
-            new ClothingItem("Sample Blue Shirt", ClothingCategory.TOP),
-            new ClothingItem("Sample Green Shirt", ClothingCategory.TOP),
-            new ClothingItem("Sample Yellow Shirt", ClothingCategory.TOP),
-            new ClothingItem("Sample Black Shirt", ClothingCategory.TOP)
+            new ClothingItem("Large Dress", ClothingCategory.TOP),
+            new ClothingItem("Suit", ClothingCategory.TOP),
+            new ClothingItem("Cute Outfit", ClothingCategory.TOP),
+            new ClothingItem("Beach Outfit", ClothingCategory.TOP),
+            new ClothingItem("Casual Outfit", ClothingCategory.TOP)
         };
 
         shoes = new ClothingItem[] {
-            new ClothingItem("Sample Red Shoes", ClothingCategory.SHOES),
-            new ClothingItem("Sample Blue Shoes", ClothingCategory.SHOES),
-            new ClothingItem("Sample Green Shoes", ClothingCategory.SHOES),
-            new ClothingItem("Sample Yellow Shoes", ClothingCategory.SHOES),
-            new ClothingItem("Sample Black Shoes", ClothingCategory.SHOES)
+            new ClothingItem("Heels", ClothingCategory.SHOES),
+            new ClothingItem("Fancy Shoes", ClothingCategory.SHOES),
+            new ClothingItem("Mary Janes", ClothingCategory.SHOES),
+            new ClothingItem("Sandals", ClothingCategory.SHOES),
+            new ClothingItem("Sneakers", ClothingCategory.SHOES)
         };
     }
 
