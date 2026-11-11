@@ -3,6 +3,7 @@ package purrfectfit.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Tests the ClothingItem class to verify that clothing
@@ -20,6 +21,7 @@ public class ClothingItemTest
      * Initializes a valid clothing item for testing
      * its name and category.
      */
+    @BeforeEach
     public void setUp()
     {
         item = new ClothingItem("Baseball Cap", ClothingCategory.HAT);
@@ -33,7 +35,7 @@ public class ClothingItemTest
     @Test
     public void testGetName()
     {
-        setUp();
+        
         assertEquals("Baseball Cap", item.getName());
     }
 
@@ -45,7 +47,7 @@ public class ClothingItemTest
     @Test
     public void testGetCategory()
     {
-        setUp();
+        
         assertEquals(ClothingCategory.HAT, item.getCategory());
     }
 

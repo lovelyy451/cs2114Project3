@@ -3,6 +3,7 @@ package purrfectfit.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Tests the Outfit class to verify valid construction,
@@ -22,6 +23,7 @@ public class OutfitTest
      * Initializes valid clothing items and an outfit
      * for testing.
      */
+    @BeforeEach
     public void setUp()
     {
         hat = new ClothingItem("Cap", ClothingCategory.HAT);
@@ -38,7 +40,7 @@ public class OutfitTest
     @Test
     public void testGetters()
     {
-        setUp();
+        
 
         assertEquals(hat, outfit.getHat());
         assertEquals(top, outfit.getTop());
@@ -52,7 +54,7 @@ public class OutfitTest
     @Test
     public void testNullHat()
     {
-        setUp();
+        
 
         try
         {
@@ -74,7 +76,7 @@ public class OutfitTest
     @Test
     public void testNullTop()
     {
-        setUp();
+        
 
         try
         {
@@ -96,7 +98,7 @@ public class OutfitTest
     @Test
     public void testNullShoes()
     {
-        setUp();
+        
 
         try
         {
@@ -119,7 +121,7 @@ public class OutfitTest
     @Test
     public void testInvalidHatCategory()
     {
-        setUp();
+        
 
         try
         {
@@ -142,7 +144,7 @@ public class OutfitTest
     @Test
     public void testInvalidTopCategory()
     {
-        setUp();
+        
 
         try
         {
@@ -165,7 +167,7 @@ public class OutfitTest
     @Test
     public void testInvalidShoesCategory()
     {
-        setUp();
+        
 
         try
         {
@@ -188,7 +190,7 @@ public class OutfitTest
     @Test
     public void testMatchesSameOutfit()
     {
-        setUp();
+        
 
         assertEquals(true, outfit.matches(outfit));
     }
@@ -201,7 +203,7 @@ public class OutfitTest
     @Test
     public void testMatchesSameItems()
     {
-        setUp();
+        
 
         Outfit other = new Outfit(hat, top, shoes);
 
@@ -216,7 +218,7 @@ public class OutfitTest
     @Test
     public void testMatchesNull()
     {
-        setUp();
+        
 
         assertEquals(false, outfit.matches(null));
     }
@@ -229,7 +231,7 @@ public class OutfitTest
     @Test
     public void testMatchesDifferentHat()
     {
-        setUp();
+        
 
         ClothingItem otherHat =
             new ClothingItem("Beanie", ClothingCategory.HAT);
@@ -246,7 +248,7 @@ public class OutfitTest
     @Test
     public void testMatchesDifferentTop()
     {
-        setUp();
+        
 
         ClothingItem otherTop =
             new ClothingItem("Jacket", ClothingCategory.TOP);
@@ -263,7 +265,7 @@ public class OutfitTest
     @Test
     public void testMatchesDifferentShoes()
     {
-        setUp();
+        
 
         ClothingItem otherShoes =
             new ClothingItem("Boots", ClothingCategory.SHOES);

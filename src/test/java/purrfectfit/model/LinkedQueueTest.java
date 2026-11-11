@@ -3,6 +3,7 @@ package purrfectfit.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import java.util.NoSuchElementException;
 
 /**
@@ -19,6 +20,7 @@ public class LinkedQueueTest
     /**
      * Initializes an empty linked queue for testing.
      */
+    @BeforeEach
     public void setUp()
     {
         queue = new LinkedQueue<String>();
@@ -31,7 +33,7 @@ public class LinkedQueueTest
     @Test
     public void testInitiallyEmpty()
     {
-        setUp();
+        
 
         assertEquals(true, queue.isEmpty());
     }
@@ -44,7 +46,7 @@ public class LinkedQueueTest
     @Test
     public void testEnqueueEmptyQueue()
     {
-        setUp();
+        
 
         queue.enqueue("First");
 
@@ -60,7 +62,7 @@ public class LinkedQueueTest
     @Test
     public void testEnqueueNonEmptyQueue()
     {
-        setUp();
+        
 
         queue.enqueue("First");
         queue.enqueue("Second");
@@ -80,7 +82,7 @@ public class LinkedQueueTest
     @Test
     public void testEnqueueNull()
     {
-        setUp();
+        
 
         try
         {
@@ -103,7 +105,7 @@ public class LinkedQueueTest
     @Test
     public void testDequeueLastElement()
     {
-        setUp();
+        
 
         queue.enqueue("First");
 
@@ -123,7 +125,7 @@ public class LinkedQueueTest
     @Test
     public void testDequeueEmpty()
     {
-        setUp();
+        
 
         try
         {
@@ -146,7 +148,7 @@ public class LinkedQueueTest
     @Test
     public void testPeek()
     {
-        setUp();
+        
 
         queue.enqueue("First");
         queue.enqueue("Second");
@@ -165,7 +167,7 @@ public class LinkedQueueTest
     @Test
     public void testPeekEmpty()
     {
-        setUp();
+        
 
         try
         {

@@ -2,6 +2,7 @@
 package purrfectfit.model;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.Random;
 
@@ -21,6 +22,7 @@ public class ClothingCatalogTest
      * Initializes a clothing catalog with a seeded
      * random generator for reproducible testing.
      */
+    @BeforeEach
     public void setUp()
     {
         catalog = new ClothingCatalog(new Random(42));
@@ -34,6 +36,7 @@ public class ClothingCatalogTest
     @Test
     public void testDefaultConstructor()
     {
+
         ClothingCatalog defaultCatalog = new ClothingCatalog();
         Outfit outfit = defaultCatalog.generateOutfit();
 
@@ -73,7 +76,7 @@ public class ClothingCatalogTest
     @Test
     public void testGenerateOutfit()
     {
-        setUp();
+        
 
         Outfit outfit = catalog.generateOutfit();
 
@@ -91,7 +94,7 @@ public class ClothingCatalogTest
     @Test
     public void testGenerateOptionsNull()
     {
-        setUp();
+        
 
         try
         {
@@ -114,7 +117,7 @@ public class ClothingCatalogTest
     @Test
     public void testGenerateOptionsForeignItem()
     {
-        setUp();
+        
 
         Outfit valid = catalog.generateOutfit();
 
@@ -147,7 +150,7 @@ public class ClothingCatalogTest
     @Test
     public void testGenerateOptions()
     {
-        setUp();
+        
 
         Outfit correct = catalog.generateOutfit();
         ClothingItem[][] options = catalog.generateOptions(correct);
