@@ -83,9 +83,6 @@ verify with the model, and such is the loop.
 - Action for exiting the game missing
 - Action for the mute button missing
 - Whether the cat bases are independent of the personalities, and if they aren't, they must become independent of the personalities and randomize accordingly.
-- **[ARI — Controller features still missing]**
-- **[TEAM — End-to-end MVP test results and unresolved crashes]**
-- **[TEAM — Scope bad-input cases tested through the GUI]**
 
 ---
 
