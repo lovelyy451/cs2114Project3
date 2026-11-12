@@ -52,6 +52,7 @@ The View can be run/started up through Maven via:
 | Timing | Model-owned timer → Injectable `LongSupplier` clock, preserved final time, dialogue-time exclusion | Deterministic tests and fair gameplay |
 | Dialogue | AI and fallback generators planned → Fallback implemented; external AI deferred | Keep D3 independent of external services |
 | Tests | Planned test cases → JUnit tests across Model classes | Verify logic without the View |
+| Methods | Needed to add a few extra methods for Controller classes | Handle input and output separately |
 
 The implementation also standardizes the outfit to three categories (`HAT`, `TOP`, `SHOES`) and uses three displayed options per category, resolving inconsistencies in the specification.
 
@@ -69,14 +70,15 @@ The Controller is responsible for passing player actions to the Model and updati
 |---|---|---|
 | Lovesh | Separating Model and View | Model implemented independently; integration pending |
 | Amelia | Customer visualization, music, visible timer | **[AMELIA TO COMPLETE]** |
-| Ari | Timer functions and customer randomization | **[ARI TO COMPLETE]** |
+| Ari | Timer functions and customer randomization | Timer and customer randomization logic implemented easily|
 
 ### Missing or Unverified Functionality
 
 - External AI dialogue is not implemented; fallback dialogue is available.
 - Model tests are reported passing.
 - Missing some digitally hand-drawn visuals/images, fonts, mand music.
-- **[ARI — Controller features still missing]**
+- Action for exiting the game missing
+- Action for the mute button missing
 - **[TEAM — End-to-end MVP test results and unresolved crashes]**
 - **[TEAM — Scope bad-input cases tested through the GUI]**
 
@@ -189,7 +191,12 @@ The player can request an additional AI-generated clue about the active customer
 
 ### Controller Source and Test Files
 
-**[ARI — Add one row for every Controller class and test file, including contribution details.]**
+| File | Contributor | Contribution |
+|---|---|---|
+| `InputHandler.java` | Ari | Developed and tested |
+| `OutputHandler.java` | Ari | Developed and tested |
+| `LevelLoader.java` | Ari | Developed and tested |
+| `Game.java` | Ari | Developed and tested |
 
 ### GenAI Notes
 
@@ -198,7 +205,7 @@ The player can request an additional AI-generated clue about the active customer
 **Amelia:** Used GenAI to help with the creation of temporary simple view files
 in order for the first Prototype to be visually assessed through the view.
 
-**Ari:** [TO COMPLETE]
+**Ari:** I did not use GenAI.
 
 ---
 
