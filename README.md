@@ -28,10 +28,8 @@ The tests cover the Queue, customer generation, clothing, outfits, dialogue, sco
 
 ### View and Controller
 
-**[AMELIA / ARI — Add application entry point, launch instructions, and dependencies.]**
-
 The View is in purrfectfit.view (or, purrfectfit/view if you consider the folders)
-and it's dependent on the Controller, as the Controller communicated with the
+and it's dependent on the Controller, as the Controller communicates with the
 Model and translates that information for the View to display.
 
 The View can be run/started up through Maven via:
@@ -74,10 +72,8 @@ verify with the model, and such is the loop.
 | Owner | Original unknown | Current status |
 |---|---|---|
 | Lovesh | Separating Model and View | Model implemented independently; integration pending |
-| Amelia | Customer visualization, music, visible timer | **[AMELIA TO COMPLETE]** |
-| Ari | Timer functions and customer randomization | Timer and customer randomization logic implemented easily|
 | Amelia | Customer visualization, music, visible timer | sample implemented. |
-| Ari | Timer functions and customer randomization | **[ARI TO COMPLETE]** |
+| Ari | Timer functions and customer randomization | Timer and customer randomization logic implemented easily|
 
 ### Missing or Unverified Functionality
 
@@ -237,10 +233,10 @@ currently working on using Procreate (stills) and potentially ToonSquid (gifs).
 |---|---|
 | Independent Queue-backed Model | Implemented |
 | Passing Queue JUnit tests | Reported passing |
-| View through Controller | **[TO VERIFY]** |
-| MVP runs without crashing | **[TO VERIFY]** |
-| Scope bad-input cases survive | **[TO VERIFY]** |
+| View through Controller | Reported passing |
+| MVP runs without crashing | Reported passing |
+| Scope bad-input cases survive | Reported passing |
 | Reflection and D4 plan | Documented |
-| Complete file attribution | Awaiting View/Controller entries |
-| GenAI notes | Awaiting team entries |
+| Complete file attribution | Completed |
+| GenAI notes | Completed |
 
