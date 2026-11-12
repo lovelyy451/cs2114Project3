@@ -52,6 +52,7 @@ The View can be run/started up through Maven via:
 | Timing | Model-owned timer → Injectable `LongSupplier` clock, preserved final time, dialogue-time exclusion | Deterministic tests and fair gameplay |
 | Dialogue | AI and fallback generators planned → Fallback implemented; external AI deferred | Keep D3 independent of external services |
 | Tests | Planned test cases → JUnit tests across Model classes | Verify logic without the View |
+| Methods | Needed to add a few extra methods for Controller classes | Handle input and output separately |
 
 The implementation also standardizes the outfit to three categories (`HAT`, `TOP`, `SHOES`) and uses three displayed options per category, resolving inconsistencies in the specification.
 
@@ -73,6 +74,8 @@ verify with the model, and such is the loop.
 | Owner | Original unknown | Current status |
 |---|---|---|
 | Lovesh | Separating Model and View | Model implemented independently; integration pending |
+| Amelia | Customer visualization, music, visible timer | **[AMELIA TO COMPLETE]** |
+| Ari | Timer functions and customer randomization | Timer and customer randomization logic implemented easily|
 | Amelia | Customer visualization, music, visible timer | sample implemented. |
 | Ari | Timer functions and customer randomization | **[ARI TO COMPLETE]** |
 
@@ -81,6 +84,8 @@ verify with the model, and such is the loop.
 - External AI dialogue is not implemented; fallback dialogue is available.
 - Model tests are reported passing.
 - Missing some digitally hand-drawn visuals/images, fonts, mand music.
+- Action for exiting the game missing
+- Action for the mute button missing
 - Whether the cat bases are independent of the personalities, and if they aren't, they must become independent of the personalities and randomize accordingly.
 - **[ARI — Controller features still missing]**
 - **[TEAM — End-to-end MVP test results and unresolved crashes]**
@@ -205,7 +210,12 @@ The player can request an additional AI-generated clue about the active customer
 
 ### Controller Source and Test Files
 
-**[ARI — Add one row for every Controller class and test file, including contribution details.]**
+| File | Contributor | Contribution |
+|---|---|---|
+| `InputHandler.java` | Ari | Developed and tested |
+| `OutputHandler.java` | Ari | Developed and tested |
+| `LevelLoader.java` | Ari | Developed and tested |
+| `Game.java` | Ari | Developed and tested |
 
 ### GenAI Notes
 
@@ -217,7 +227,7 @@ For our next prototype, I'll have reworked the code to properly reflect my/our
 desired game graphical representation, as well as implement the designs I'm
 currently working on using Procreate (stills) and potentially ToonSquid (gifs).
 
-**Ari:** [TO COMPLETE]
+**Ari:** I did not use GenAI.
 
 ---
 
