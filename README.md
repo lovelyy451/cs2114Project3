@@ -196,7 +196,7 @@ The player can request an additional AI-generated clue about the active customer
 | `StartScreen.java` | Amelia | Developed and tested |
 | `ResultsScreen.java` | Amelia | Developed and tested |
 | `ScenePanel.java` | Amelia | Developed and tested |
-| `CatergoryPanel.java` | Amelia | Developed and tested |
+| `CategoryPanel.java` | Amelia | Developed and tested |
 | `Assets.java` | Amelia | Developed |
 | `Fonts.java` | Amelia | Developed |
 | `Music.java` | Amelia | Developed |
