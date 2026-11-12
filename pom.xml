@@ -12,7 +12,7 @@
   <properties>
     <maven.compiler.release>17</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <main.class>purrfectfit.Main</main.class>
+    <main.class>purrfectfit.controller.Game</main.class>
   </properties>
 
   <dependencies>
