@@ -71,7 +71,7 @@ verify with the model, and such is the loop.
 
 | Owner | Original unknown | Current status |
 |---|---|---|
-| Lovesh | Separating Model and View | Model implemented independently; integration pending |
+| Lovesh | Separating Model and View | Model implemented independently; integrated |
 | Amelia | Customer visualization, music, visible timer | sample implemented. |
 | Ari | Timer functions and customer randomization | Timer and customer randomization logic implemented easily|
 
