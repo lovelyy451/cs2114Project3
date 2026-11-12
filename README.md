@@ -61,14 +61,19 @@ The Model has no Swing dependencies. `GameModel` owns gameplay rules, timing, sc
 
 The Controller is responsible for passing player actions to the Model and updating the View. Model tests run without constructing GUI components.
 
-**[AMELIA / ARI — Confirm integration and any responsibilities moved between layers.]**
+Amelia initially wanted to have the swing timer implemented in the view, but
+upon further consideration the controller now has it implemented. As such,
+the controller now has a swing dependency.
+
+The controller also utilizes methods present within the view to pass back and
+verify with the model, and such is the loop. 
 
 ### Unknowns From Scope
 
 | Owner | Original unknown | Current status |
 |---|---|---|
 | Lovesh | Separating Model and View | Model implemented independently; integration pending |
-| Amelia | Customer visualization, music, visible timer | **[AMELIA TO COMPLETE]** |
+| Amelia | Customer visualization, music, visible timer | sample implemented. |
 | Ari | Timer functions and customer randomization | **[ARI TO COMPLETE]** |
 
 ### Missing or Unverified Functionality
@@ -76,6 +81,7 @@ The Controller is responsible for passing player actions to the Model and updati
 - External AI dialogue is not implemented; fallback dialogue is available.
 - Model tests are reported passing.
 - Missing some digitally hand-drawn visuals/images, fonts, mand music.
+- Whether the cat bases are independent of the personalities, and if they aren't, they must become independent of the personalities and randomize accordingly.
 - **[ARI — Controller features still missing]**
 - **[TEAM — End-to-end MVP test results and unresolved crashes]**
 - **[TEAM — Scope bad-input cases tested through the GUI]**
@@ -185,7 +191,17 @@ The player can request an additional AI-generated clue about the active customer
 
 ### View Source and Test Files
 
-**[AMELIA — Add one row for every View class and test file, including contribution details.]**
+| File | Contributor | Contribution |
+|---|---|---|
+| `MainWindow.java` | Amelia | Developed and tested |
+| `GameScreen.java` | Amelia | Developed and tested |
+| `StartScreen.java` | Amelia | Developed and tested |
+| `ResultsScreen.java` | Amelia | Developed and tested |
+| `ScenePanel.java` | Amelia | Developed and tested |
+| `CatergoryPanel.java` | Amelia | Developed and tested |
+| `Assets.java` | Amelia | Developed |
+| `Fonts.java` | Amelia | Developed |
+| `Music.java` | Amelia | Developed |
 
 ### Controller Source and Test Files
 
@@ -197,6 +213,9 @@ The player can request an additional AI-generated clue about the active customer
 
 **Amelia:** Used GenAI to help with the creation of temporary simple view files
 in order for the first Prototype to be visually assessed through the view.
+For our next prototype, I'll have reworked the code to properly reflect my/our
+desired game graphical representation, as well as implement the designs I'm
+currently working on using Procreate (stills) and potentially ToonSquid (gifs).
 
 **Ari:** [TO COMPLETE]
 
