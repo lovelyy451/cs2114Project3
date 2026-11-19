@@ -1,6 +1,7 @@
+
 # Purrfect Fit — Group 37
 
-**CS 2114 | Project 3 | Deliverable 3 — First Prototype**
+**CS 2114 | Project 3 | Deliverable 4 — Second Prototype + Tests**
 
 **Team:** Lovesh Kataria (Model), Amelia Vasquez Rosario (View), Ari (Controller)
 
@@ -24,7 +25,7 @@ Run the JUnit tests using the project's configured test runner or Maven:
 
 The tests cover the Queue, customer generation, clothing, outfits, dialogue, scoring, timing, and progression.
 
-**Test status:** All Model tests reported passing.
+**Test status:** All Model tests pass with zero failures and zero errors. `LinkedQueueTest` also verifies FIFO order after interleaved enqueue and dequeue operations.
 
 ### View and Controller
 
@@ -34,7 +35,7 @@ Model and translates that information for the View to display.
 
 The View can be run/started up through Maven via:
 
- `mvn exec:java`
+`mvn exec:java`
 
 ---
 
@@ -48,11 +49,20 @@ The View can be run/started up through Maven via:
 | Outfit validation | Check correctness → Also reject items outside displayed options | Enforce rules independently of GUI |
 | Incomplete submissions | Reject incomplete outfits → Constructor validates items; `submitOutfit(null)` returns `INVALID` | Protect game state |
 | Timing | Model-owned timer → Injectable `LongSupplier` clock, preserved final time, dialogue-time exclusion | Deterministic tests and fair gameplay |
-| Dialogue | AI and fallback generators planned → Fallback implemented; external AI deferred | Keep D3 independent of external services |
-| Tests | Planned test cases → JUnit tests across Model classes | Verify logic without the View |
+| Dialogue | AI and fallback generators planned → Fallback implemented; external AI dropped | API costs and unreliable adherence to dialogue constraints |
+| Hints | AI-generated hints planned → Fallback-based hints retained | Avoid external dependencies |
+| Tests | Planned test cases → Passing JUnit tests across Model classes | Verify logic without the View |
 | Methods | Needed to add a few extra methods for Controller classes | Handle input and output separately |
 
 The implementation also standardizes the outfit to three categories (`HAT`, `TOP`, `SHOES`) and uses three displayed options per category, resolving inconsistencies in the specification.
+
+### Non-Trivial Feature: Dialogue and Hints
+
+The D3 plan proposed AI-generated customer dialogue with two additional hint requests per level.
+
+External AI integration was dropped because the API required paid access and testing showed inconsistent adherence to dialogue constraints. After approximately 50–100 conversational test attempts, responses sometimes exceeded character limits or failed to follow the required conversation boundaries.
+
+Instead, the project retained fallback dialogue for hints, avoiding external API dependencies.
 
 ### Model/View Separation
 
@@ -65,7 +75,13 @@ upon further consideration the controller now has it implemented. As such,
 the controller now has a swing dependency.
 
 The controller also utilizes methods present within the view to pass back and
-verify with the model, and such is the loop. 
+verify with the model, and such is the loop.
+
+The fallback dialogue system allows dialogue generation without changing core gameplay logic. No additional Model classes or method signatures were changed from D3.
+
+The original prediction that Queue, clothing, and outfit classes would remain unchanged was maintained. The main difference from the D3 plan was dropping external AI integration.
+
+A future improvement would be to organize fallback dialogue into personality-specific collections, allowing new dialogue to be added without changing gameplay logic.
 
 ### Unknowns From Scope
 
@@ -73,12 +89,14 @@ verify with the model, and such is the loop.
 |---|---|---|
 | Lovesh | Separating Model and View | Model implemented independently; integrated |
 | Amelia | Customer visualization, music, visible timer | sample implemented. |
-| Ari | Timer functions and customer randomization | Timer and customer randomization logic implemented easily|
+| Ari | Timer functions and customer randomization | Timer and customer randomization logic implemented easily |
 
 ### Missing or Unverified Functionality
 
-- External AI dialogue is not implemented; fallback dialogue is available.
-- Model tests are reported passing.
+- External AI dialogue was dropped; fallback dialogue is available.
+- All Model tests pass.
+- No known Model bugs or failing tests remain.
+- Fallback dialogue could be expanded with personality-specific responses and more randomized customer names.
 - Missing some digitally hand-drawn visuals/images, fonts, mand music.
 - Action for exiting the game missing
 - Action for the mute button missing
@@ -96,16 +114,18 @@ verify with the model, and such is the loop.
 | 2 | Connect View and Model through Controller | Ari |
 | 3 | Integrate and test full gameplay | Everyone |
 | 4 | Test bad inputs and resolve crashes | Everyone |
-| 5 | Implement and test AI dialogue extension | Lovesh |
-| 6 | Finalize README and submission | Everyone |
+| 5 | Expand fallback dialogue with personality-specific responses | Lovesh |
+| 6 | Add a larger randomized customer-name collection | Lovesh |
+| 7 | Test new dialogue and name-generation behavior | Lovesh |
+| 8 | Finalize README and submission | Everyone |
 
-### Non-Trivial D4 Change: AI Dialogue and Limited Hint Requests
+### D4 Feature Decision: AI Dialogue and Limited Hint Requests
 
-**Proposed feature:** AI-generated dialogue with two additional hint requests per level.
+**Original proposed feature:** AI-generated dialogue with two additional hint requests per level.
 
-The player can request an additional AI-generated clue about the active customer's outfit. Each request consumes one of the two available hints. Requests with no hints remaining are rejected. If AI generation fails, fallback dialogue is used without crashing.
+**D4 decision:** External AI integration was dropped because of API costs and inconsistent responses during testing. Fallback dialogue remains available for hints.
 
-**Predicted changes:**
+**D3 predicted changes:**
 
 | Class | Specific changes |
 |---|---|
@@ -120,33 +140,37 @@ The player can request an additional AI-generated clue about the active customer
 
 **Expected unchanged classes:** `LinkedQueue`, `ClothingItem`, `ClothingCategory`, `Outfit`, `ClothingCatalog`, `Personality`, `GameStatus`, and `SubmissionResult`.
 
-**Reason:** Hint requests affect dialogue and gameplay state, not FIFO structure, clothing definitions, or outfit matching.
+**Actual Model changes:** No additional Model classes or method signatures were changed from D3. External AI integration was dropped, and fallback dialogue was retained.
 
 **Owners:** Lovesh — Model and tests; Ari — Controller; Amelia — View.
 
-**Status:** Proposed for D4; not implemented in D3.
+**Status:** External AI dropped; fallback dialogue and hints retained.
 
 ### Stretch Goals
 
-- **Keep:** AI-generated dialogue, extended with limited hint requests.
-- **Drop:** Monetary system, tips, purchasable decorations, and upgrades.
+- **Keep:** Expanded personality-specific fallback dialogue and randomized customer names.
+- **Drop:** External AI integration, monetary system, tips, purchasable decorations, and upgrades.
 
-### New Tests Needed
+### Final Build Tests
 
 **Model — Lovesh**
-- AI dialogue succeeds, fails, times out, or returns blank text.
-- Fallback dialogue remains available.
-- `requestHint()` decrements the counter correctly.
-- Requests are rejected when no hints remain or no level is active.
-- Hint allowances reset on new levels and retries.
-- Hint generation does not disrupt the customer queue or timer.
-- Correct outfits and customer personalities remain unchanged.
+- All existing Model JUnit tests pass.
+- `LinkedQueueTest` verifies FIFO order after interleaved enqueue and dequeue operations.
+- Test any newly added personality-specific dialogue.
+- Test expanded randomized customer-name generation.
+- Verify Model behavior during final integration.
 
 **Controller — Ari:** Test hint-button actions, repeated clicks, and rejected requests.
 
 **View — Amelia:** Test hint display, remaining count, and failure feedback.
 
 **Integration — Everyone:** Test the complete MVP and all bad inputs from the scope: incomplete outfits, incorrect selections, repeated submissions, expired submissions, and attempts to bypass FIFO order.
+
+### Final Demo — Model Contribution
+
+The three-minute demo will demonstrate normal gameplay, including customer dialogue, outfit submission, scoring, and fallback-based hint requests.
+
+The Model portion will demonstrate that gameplay functions without external AI services.
 
 ---
 
@@ -224,16 +248,19 @@ currently working on using Procreate (stills) and potentially ToonSquid (gifs).
 
 ---
 
-## D3 Verification
+## D4 Verification
 
 | Requirement | Status |
 |---|---|
 | Independent Queue-backed Model | Implemented |
-| Passing Queue JUnit tests | Reported passing |
-| View through Controller | Reported passing |
-| MVP runs without crashing | Reported passing |
-| Scope bad-input cases survive | Reported passing |
-| Reflection and D4 plan | Documented |
-| Complete file attribution | Completed |
+| Passing Model and Queue JUnit tests | Confirmed passing |
+| Interleaved enqueue/dequeue FIFO test | Implemented |
+| Known Model bugs | None reported |
+| External AI integration | Dropped; explained in Reflection |
+| Fallback-based hints | Retained |
+| View through Controller | Reported passing in D3; D4 verification pending |
+| MVP runs without crashing | Reported passing in D3; D4 verification pending |
+| Scope bad-input cases survive | D4 integration verification pending |
+| Reflection and final build plan | Documented |
+| Complete file attribution | Retained from D3 |
 | GenAI notes | Completed |
-
