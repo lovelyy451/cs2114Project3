@@ -3,7 +3,7 @@
 
 **CS 2114 | Project 3 | Deliverable 4 — Second Prototype + Tests**
 
-**Team:** Lovesh Kataria (Model), Amelia Vasquez Rosario (View), Ari (Controller)
+**Team:** Lovesh Kataria (Model), Amelia Vasquez Rosario (View), Ari Bajaj (Controller)
 
 ## Overview
 
@@ -92,6 +92,7 @@ A future improvement would be to organize fallback dialogue into personality-spe
 ### Missing or Unverified Functionality
 
 - External AI dialogue was dropped; fallback dialogue is available.
+- Missing hint button and generated hints.
 - All Model tests pass.
 - No known Model bugs or failing tests remain.
 - Fallback dialogue could be expanded with personality-specific responses and more randomized customer names.
@@ -253,9 +254,9 @@ and music atop the view files that were previously created.
 | Known Model bugs | None reported |
 | External AI integration | Dropped; explained in Reflection |
 | Fallback-based hints | Retained |
-| View through Controller | Reported passing in D3; D4 verification pending |
-| MVP runs without crashing | Reported passing in D3; D4 verification pending |
-| Scope bad-input cases survive | D4 integration verification pending |
+| View through Controller | Reported passing in D4 |
+| MVP runs without crashing | Reported passing in D4 |
+| Scope bad-input cases survive | Integrated and passing |
 | Reflection and final build plan | Documented |
 | Complete file attribution | Retained from D3 |
 | GenAI notes | Completed |
