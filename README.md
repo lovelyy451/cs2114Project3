@@ -98,8 +98,6 @@ A future improvement would be to organize fallback dialogue into personality-spe
 - No known Model bugs or failing tests remain.
 - Fallback dialogue could be expanded with personality-specific responses and more randomized customer names.
 - Missing some digitally hand-drawn visuals/images, fonts, mand music.
-- Action for exiting the game missing
-- Action for the mute button missing
 - Whether the cat bases are independent of the personalities, and if they aren't, they must become independent of the personalities and randomize accordingly.
 
 ---
