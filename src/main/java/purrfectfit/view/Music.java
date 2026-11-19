@@ -16,12 +16,12 @@ import javax.sound.sampled.Clip;
 public class Music
 {
     /** Where the song lives on the classpath (.wav works everywhere). */
-    public static final String MUSIC_PATH = "/music/theme.wav";
- 
+    public static final String MUSIC_PATH = "/music/cream_soda.wav";
+
     private Clip trackClip;
     private boolean muted;
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Tries to load the song.
@@ -43,8 +43,8 @@ public class Music
             trackClip = null;
         }
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Starts the looped song (unless muted or missing).
@@ -56,8 +56,8 @@ public class Music
             trackClip.loop(Clip.LOOP_CONTINUOUSLY);
         }
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Mutes or unmutes.
@@ -81,8 +81,8 @@ public class Music
             play();
         }
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Whether the music is muted.

@@ -2,6 +2,9 @@ package purrfectfit.view;
 
 // Imports :)
 
+import purrfectfit.model.ClothingItem;
+import purrfectfit.model.Personality;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -14,11 +17,10 @@ import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import javax.imageio.ImageIO;
-
-import purrfectfit.model.ClothingItem;
-import purrfectfit.model.Personality;
 
 /**
  * Has and loads every image once and caches them :) !!
@@ -39,7 +41,7 @@ public class Assets
     public static final int ICON_H = 48;
     /** Number of different cat bases. */
     public static final int CAT_VARIANTS = 4;
- 
+
     /** Colors shared by the whole UI (taken from the spec doc palette). */
     public static final Color PINK_DARK = new Color(232, 149, 154);
     /** Light pink. */
@@ -48,22 +50,24 @@ public class Assets
     public static final Color PINK_PALE = new Color(252, 230, 230);
     /** Text color. */
     public static final Color TEXT = new Color(214, 80, 98);
- 
+
     // Where the dressed-up parts sit on the cat (native coordinates).
     // x, y, w, h
     private static final int[] HAT_BOX = { 136, 14, 48, 26 };
     private static final int[] TOP_BOX = { 134, 70, 52, 54 };
     private static final int[] SHOES_BOX = { 138, 144, 44, 14 };
- 
+
     private static final Map<String, BufferedImage> CACHE = new HashMap<>();
- 
- 
+    private static final Set<String> MISSING = new HashSet<>();
+    private static final String[] CAT_NAMES = { "white", "black", "ginger", "calico" };
+
+
     private Assets()
     {
         // static only
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Stable cache key for an item (does not rely on equals/hashCode).
@@ -76,8 +80,8 @@ public class Assets
     {
         return item.getCategory().ordinal() + ":" + item.getName();
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * True when both items are the same clothing item (or both null).
@@ -96,8 +100,8 @@ public class Assets
         }
         return key(a).equals(key(b));
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * The room behind the cat.
@@ -106,6 +110,11 @@ public class Assets
      */
     public static Image background()
     {
+        BufferedImage art = real("background.png");
+        if (art != null)
+        {
+            return art;
+        }
         return cached("background", () -> {
             BufferedImage img = blankScene();
             Graphics2D g = flat(img);
@@ -126,8 +135,8 @@ public class Assets
             return img;
         });
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * The counter/desk drawn in front of the cat.
@@ -136,6 +145,11 @@ public class Assets
      */
     public static Image counter()
     {
+        BufferedImage art = real("counter.png");
+        if (art != null)
+        {
+            return art;
+        }
         return cached("counter", () -> {
             BufferedImage img = blankScene();
             Graphics2D g = flat(img);
@@ -147,8 +161,8 @@ public class Assets
             return img;
         });
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * The undressed cat. TEMPORARY: the Model has no "base" on Customer yet,
@@ -163,8 +177,8 @@ public class Assets
     {
         return catBase(personality == null ? 0 : personality.ordinal());
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * The undressed cat.
@@ -176,13 +190,18 @@ public class Assets
     public static Image catBase(int variant)
     {
         final int v = Math.floorMod(variant, CAT_VARIANTS);
+        BufferedImage art = real("cat_" + CAT_NAMES[v] + ".png");
+        if (art != null)
+        {
+            return art;
+        }
         return cached("cat:" + v, () -> {
             Color[] fur = { new Color(250, 248, 245), new Color(52, 46, 58),
                 new Color(231, 143, 62), new Color(250, 248, 245) };
             Color[] outline = { new Color(165, 160, 172), new Color(22, 20, 28),
                 new Color(160, 88, 38), new Color(150, 140, 140) };
             boolean dark = v == 1;
- 
+
             Area cat = new Area();
             Shape[] parts = { new Rectangle2D.Double(180, 104, 22, 8), // tail
                 new Rectangle2D.Double(196, 90, 8, 22),
@@ -200,7 +219,7 @@ public class Assets
             {
                 cat.add(new Area(s));
             }
- 
+
             BufferedImage img = blankScene();
             Graphics2D g = flat(img);
             g.setColor(outline[v]);
@@ -208,7 +227,7 @@ public class Assets
             g.draw(cat);
             g.setColor(fur[v]);
             g.fill(cat);
- 
+
             if (v == 3) // calico patches, clipped to the cat's shape
             {
                 g.setClip(cat);
@@ -222,7 +241,7 @@ public class Assets
                 g.fillRect(146, 126, 10, 24);
                 g.setClip(null);
             }
- 
+
             g.setColor(dark ? new Color(255, 225, 110) : new Color(50, 40, 55)); // eyes
             g.fillRect(150, 46, 4, 6);
             g.fillRect(166, 46, 4, 6);
@@ -235,8 +254,8 @@ public class Assets
             return img;
         });
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * The clothing drawn in scene position, to be stacked over the cat.
@@ -247,6 +266,11 @@ public class Assets
      */
     public static Image itemLayer(ClothingItem item)
     {
+        BufferedImage art = real(itemFile(item));
+        if (art != null)
+        {
+            return art;
+        }
         return cached("layer:" + key(item), () -> {
             BufferedImage img = blankScene();
             Graphics2D g = flat(img);
@@ -256,19 +280,37 @@ public class Assets
             return img;
         });
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
-     * Small picture of the item for its option button.
+     * Picture of the item for its slot: the real image cropped to the
+     * visible part and shrunk to fit inside w x h (placeholder if no art).
      *
      * @param item
      *            the item
-     * @return ICON_W x ICON_H image
+     * @param w
+     *            largest width
+     * @param h
+     *            largest height
+     * @return a w x h transparent image with the item centered in it
      */
-    public static Image itemIcon(ClothingItem item)
+    public static Image itemIcon(ClothingItem item, int w, int h)
     {
-        return cached("icon:" + key(item), () -> {
+        return cached("icon:" + key(item) + ":" + w + "x" + h, () -> {
+            BufferedImage src = opaqueCrop(real(itemFile(item)));
+            if (src == null)
+            {
+                src = placeholderIcon(item);
+            }
+            return fit(src, w, h);
+        });
+    }
+
+
+    private static BufferedImage placeholderIcon(ClothingItem item)
+    {
+        return cached("rawicon:" + key(item), () -> {
             BufferedImage img = new BufferedImage(ICON_W, ICON_H,
                 BufferedImage.TYPE_INT_ARGB);
             Graphics2D g = img.createGraphics();
@@ -286,8 +328,8 @@ public class Assets
             return img;
         });
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Loads a PNG from src/main/resources (for when real art exists).
@@ -307,10 +349,10 @@ public class Assets
             return null;
         }
     }
- 
- 
+
+
     // ---------------- placeholder painting helpers ----------------
- 
+
     private static int[] boxFor(ClothingItem item)
     {
         // Slot order is the enum order: 0 = hat, 1 = top, 2 = shoes.
@@ -324,8 +366,8 @@ public class Assets
                 return SHOES_BOX;
         }
     }
- 
- 
+
+
     private static void paintItem(
         Graphics2D g,
         ClothingItem item,
@@ -353,8 +395,8 @@ public class Assets
             paintGeneric(g, item, x, y, w, h);
         }
     }
- 
- 
+
+
     private static boolean paintHat(Graphics2D g, String n, int x, int y, int w, int h)
     {
         int cx = x + w / 2;
@@ -410,8 +452,8 @@ public class Assets
         }
         return true;
     }
- 
- 
+
+
     private static boolean paintTop(Graphics2D g, String n, int x, int y, int w, int h)
     {
         int cx = x + w / 2;
@@ -486,8 +528,8 @@ public class Assets
         }
         return true;
     }
- 
- 
+
+
     private static boolean paintShoes(Graphics2D g, String n, int x, int y, int w, int h)
     {
         int sw = w / 2 - 2;
@@ -547,8 +589,8 @@ public class Assets
         }
         return true;
     }
- 
- 
+
+
     /** Fallback for a name the placeholder does not know. */
     private static void paintGeneric(
         Graphics2D g,
@@ -564,14 +606,258 @@ public class Assets
         g.setColor(Color.getHSBColor((hue + 0.5f) % 1f, 0.6f, 0.85f));
         g.fillRect(x + 4, y + h - 6, w - 8, 4);
     }
- 
- 
+
+
+    // ----------------------------------------------------------
+    /**
+     * Layer drawn between the background and the cat (the cat's platform).
+     *
+     * @return full-size image, or null if there is no art
+     */
+    public static Image platform()
+    {
+        return real("cat_platform.png");
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * The speech bubble (full-size layer).
+     *
+     * @return full-size image
+     */
+    public static Image speechBubble()
+    {
+        BufferedImage art = real("speech_bubble.png");
+        if (art != null)
+        {
+            return art;
+        }
+        return cached("bubble", () -> {
+            BufferedImage img = blankFull();
+            Graphics2D g = smooth(img);
+            g.setColor(Color.WHITE);
+            g.fillRoundRect(Layout.GAME_BUBBLE.x, Layout.GAME_BUBBLE.y,
+                Layout.GAME_BUBBLE.width, Layout.GAME_BUBBLE.height, 30, 30);
+            g.setColor(PINK_DARK);
+            g.setStroke(new BasicStroke(3));
+            g.drawRoundRect(Layout.GAME_BUBBLE.x, Layout.GAME_BUBBLE.y,
+                Layout.GAME_BUBBLE.width, Layout.GAME_BUBBLE.height, 30, 30);
+            g.dispose();
+            return img;
+        });
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * The item panel with all nine slots drawn on it (full-size layer).
+     *
+     * @return full-size image
+     */
+    public static Image slotsPanel()
+    {
+        BufferedImage art = real("item_slots.png");
+        if (art == null)
+        {
+            art = real("item slots.png");
+        }
+        if (art != null)
+        {
+            return art;
+        }
+        return cached("slots", () -> {
+            BufferedImage img = blankFull();
+            Graphics2D g = smooth(img);
+            g.setColor(PINK_PALE);
+            g.fillRect(Layout.GAME_SLOT.x - 44, 45, Layout.WIDTH - Layout.GAME_SLOT.x + 44,
+                Layout.HEIGHT - 45);
+            for (int r = 0; r < 3; r++)
+            {
+                for (int c = 0; c < 3; c++)
+                {
+                    java.awt.Rectangle s = Layout.slotRect(r, c);
+                    g.setColor(Color.WHITE);
+                    g.fillRoundRect(s.x, s.y, s.width, s.height, 12, 12);
+                    g.setColor(PINK_DARK);
+                    g.drawRoundRect(s.x, s.y, s.width, s.height, 12, 12);
+                }
+            }
+            g.dispose();
+            return img;
+        });
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * The bar across the top that holds level, time and score.
+     *
+     * @return full-size image
+     */
+    public static Image hudBand()
+    {
+        BufferedImage art = real("hud_band.png");
+        if (art != null)
+        {
+            return art;
+        }
+        return cached("hud", () -> {
+            BufferedImage img = blankFull();
+            Graphics2D g = smooth(img);
+            g.setColor(TEXT);
+            g.fillRect(Layout.GAME_HUD.x, Layout.GAME_HUD.y, Layout.GAME_HUD.width,
+                Layout.GAME_HUD.height);
+            g.dispose();
+            return img;
+        });
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * The blank button shape used for every button.
+     *
+     * @return the image, or null if it is missing (buttons paint a fallback)
+     */
+    public static Image buttonBase()
+    {
+        return real("button_base.png");
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * Optional art for the mute button.
+     *
+     * @param on
+     *            true for the music-on picture
+     * @return the image, or null if there is none (the button paints a speaker)
+     */
+    public static Image muteIcon(boolean on)
+    {
+        return real(on ? "music_on.png" : "music_off.png");
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * Name of the image file for an item, like "hat_top_hat.png". The model
+     * names ("Top Hat", "Large Dress", "Fancy Shoes", "Cute Outfit") lose
+     * the filler words and get the category in front.
+     *
+     * @param item
+     *            the item
+     * @return file name inside resources/images
+     */
+    static String itemFile(ClothingItem item)
+    {
+        String stem = item.getName().toLowerCase().trim()
+            .replaceAll("\\b(outfit|shoes|large)\\b", "").trim()
+            .replaceAll("\\s+", "_");
+        return item.getCategory().name().toLowerCase() + "_" + stem + ".png";
+    }
+
+
+    /** Loads resources/images/file once; null (remembered) if it is not there. */
+    private static BufferedImage real(String file)
+    {
+        String path = "/images/" + file;
+        BufferedImage hit = CACHE.get(path);
+        if (hit != null || MISSING.contains(path))
+        {
+            return hit;
+        }
+        try (var in = Assets.class.getResourceAsStream(path))
+        {
+            if (in != null)
+            {
+                BufferedImage img = ImageIO.read(in);
+                if (img != null)
+                {
+                    CACHE.put(path, img);
+                    return img;
+                }
+            }
+        }
+        catch (java.io.IOException e)
+        {
+            // treat as missing
+        }
+        MISSING.add(path);
+        System.err.println("[Assets] image not found on classpath, using placeholder: " + path);
+        return null;
+    }
+
+
+    /** Crops to the visible (non-transparent) part; null in, null out. */
+    private static BufferedImage opaqueCrop(BufferedImage img)
+    {
+        if (img == null)
+        {
+            return null;
+        }
+        int minX = img.getWidth();
+        int minY = img.getHeight();
+        int maxX = -1;
+        int maxY = -1;
+        for (int y = 0; y < img.getHeight(); y++)
+        {
+            for (int x = 0; x < img.getWidth(); x++)
+            {
+                if ((img.getRGB(x, y) >>> 24) > 8)
+                {
+                    minX = Math.min(minX, x);
+                    minY = Math.min(minY, y);
+                    maxX = Math.max(maxX, x);
+                    maxY = Math.max(maxY, y);
+                }
+            }
+        }
+        if (maxX < 0)
+        {
+            return img;
+        }
+        return img.getSubimage(minX, minY, maxX - minX + 1, maxY - minY + 1);
+    }
+
+
+    /** Shrinks (never enlarges past 3x) to fit inside w x h, centered. */
+    private static BufferedImage fit(BufferedImage src, int w, int h)
+    {
+        double s = Math.min((double)w / src.getWidth(), (double)h / src.getHeight());
+        s = Math.min(s, 3.0);
+        int nw = Math.max(1, (int)Math.round(src.getWidth() * s));
+        int nh = Math.max(1, (int)Math.round(src.getHeight() * s));
+        Image scaled = src.getScaledInstance(nw, nh, Image.SCALE_AREA_AVERAGING);
+        BufferedImage out = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = out.createGraphics();
+        g.drawImage(scaled, (w - nw) / 2, (h - nh) / 2, null);
+        g.dispose();
+        return out;
+    }
+
+
+    private static BufferedImage blankFull()
+    {
+        return new BufferedImage(Layout.WIDTH, Layout.HEIGHT, BufferedImage.TYPE_INT_ARGB);
+    }
+
+
+    private static Graphics2D smooth(BufferedImage img)
+    {
+        Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        return g;
+    }
+
+
     private static BufferedImage blankScene()
     {
         return new BufferedImage(SCENE_W, SCENE_H, BufferedImage.TYPE_INT_ARGB);
     }
- 
- 
+
+
     /** Graphics with antialiasing off so the scene stays crisp/pixelly. */
     private static Graphics2D flat(BufferedImage img)
     {
@@ -581,12 +867,18 @@ public class Assets
         g.setStroke(new BasicStroke(1));
         return g;
     }
- 
- 
+
+
     private static BufferedImage cached(
         String name,
         java.util.function.Supplier<BufferedImage> maker)
     {
-        return CACHE.computeIfAbsent(name, n -> maker.get());
+        BufferedImage hit = CACHE.get(name);
+        if (hit == null)
+        {
+            hit = maker.get();
+            CACHE.put(name, hit);
+        }
+        return hit;
     }
 }

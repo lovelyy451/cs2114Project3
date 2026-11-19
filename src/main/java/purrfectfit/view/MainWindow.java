@@ -5,15 +5,11 @@ package purrfectfit.view;
 import purrfectfit.model.ClothingCategory;
 import purrfectfit.model.ClothingItem;
 import purrfectfit.model.Customer;
- 
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
@@ -25,7 +21,8 @@ import javax.swing.UIManager;
  * @version November 2026
  */
 
-public class MainWindow extends JFrame
+public class MainWindow
+    extends JFrame
 {
     /** Card name of the start screen. */
     public static final String START = "start";
@@ -34,10 +31,10 @@ public class MainWindow extends JFrame
     /** Card name of the results screen. */
     public static final String RESULTS = "results";
     /** Fixed window content size. */
-    public static final int WINDOW_WIDTH = 960;
+    public static final int WINDOW_WIDTH = Layout.WIDTH;
     /** Fixed window content size. */
-    public static final int WINDOW_HEIGHT = 540;
- 
+    public static final int WINDOW_HEIGHT = Layout.HEIGHT;
+
     static
     {
         // Metal looks the same on every OS, so colors/borders always show.
@@ -50,21 +47,20 @@ public class MainWindow extends JFrame
             // keep the default look
         }
     }
- 
+
+    private final Music music = new Music();
+
     /** Screens are public so the controller can reach their buttons. */
-    public final StartScreen startScreen = new StartScreen();
+    public final StartScreen startScreen = new StartScreen(music);
     /** The gameplay screen. */
-    public final GameScreen gameScreen = new GameScreen();
+    public final GameScreen gameScreen = new GameScreen(music);
     /** The results screen. */
-    public final ResultsScreen resultsScreen = new ResultsScreen();
- 
+    public final ResultsScreen resultsScreen = new ResultsScreen(music);
+
     private final CardLayout cardLayout = new CardLayout();
     private final JPanel cards = new JPanel(cardLayout);
-    private final JPanel topBar = new JPanel(new BorderLayout());
-    private final JButton muteButton = new JButton("Music: On");
-    private final Music music = new Music();
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Builds the window and shows it.
@@ -74,40 +70,22 @@ public class MainWindow extends JFrame
         super("Purrfect Fit");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setResizable(false);
- 
-        JLabel title = new JLabel("  Purrfect Fit");
-        title.setFont(Fonts.HUD);
-        title.setForeground(Color.WHITE);
- 
-        muteButton.setFont(Fonts.BODY.deriveFont(14f));
-        muteButton.setFocusable(false);
-        muteButton.addActionListener(e -> {
-            music.setMuted(!music.isMuted());
-            muteButton.setText(music.isMuted() ? "Music: Off" : "Music: On");
-        });
- 
-        topBar.setBackground(Assets.TEXT);
-        topBar.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 6));
-        topBar.setPreferredSize(new Dimension(0, 32));
-        topBar.add(title, BorderLayout.WEST);
-        topBar.add(muteButton, BorderLayout.EAST);
- 
+
         cards.add(startScreen, START); // first card added is shown first
         cards.add(gameScreen, GAME);
         cards.add(resultsScreen, RESULTS);
- 
+
         getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(topBar, BorderLayout.NORTH);
         getContentPane().add(cards, BorderLayout.CENTER);
         getContentPane().setPreferredSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
         pack();
         setLocationRelativeTo(null);
- 
+
         music.play();
         setVisible(true);
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Switches screens.
@@ -123,8 +101,8 @@ public class MainWindow extends JFrame
         }
         cardLayout.show(cards, name);
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Shows the results screen.
@@ -141,8 +119,8 @@ public class MainWindow extends JFrame
         resultsScreen.setResults(passed, score, level);
         showScreen(RESULTS);
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Shows the end-of-game screen after the last level.
@@ -155,8 +133,8 @@ public class MainWindow extends JFrame
         resultsScreen.setGameComplete(totalScore);
         showScreen(RESULTS);
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Shows or hides the loading state while a level is generated.
@@ -169,10 +147,34 @@ public class MainWindow extends JFrame
         startScreen.setLoading(loading);
         resultsScreen.setLoading(loading);
     }
- 
- 
+
+
     // The rest simply pass through to the game screen.
- 
+
+    // ----------------------------------------------------------
+    /**
+     * Shows a hint.
+     *
+     * @param hint
+     *            hint text
+     */
+    public void showHint(String hint)
+    {
+        gameScreen.showHint(hint);
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * Closes the window and quits the game.
+     */
+    public void closeGame()
+    {
+        dispose();
+        System.exit(0);
+    }
+
+
     // ----------------------------------------------------------
     /**
      * Shows the front customer.
@@ -184,8 +186,8 @@ public class MainWindow extends JFrame
     {
         gameScreen.setCustomer(customer);
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Shows the customer's dialogue.
@@ -197,8 +199,8 @@ public class MainWindow extends JFrame
     {
         gameScreen.setDialogue(text);
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Shows one chosen item (and clears old feedback).
@@ -212,8 +214,8 @@ public class MainWindow extends JFrame
     {
         gameScreen.setSelectedItem(category, item);
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Shows the whole current selection.
@@ -229,8 +231,8 @@ public class MainWindow extends JFrame
     {
         gameScreen.setSelection(hat, top, shoes);
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Shows the time left.
@@ -242,8 +244,8 @@ public class MainWindow extends JFrame
     {
         gameScreen.setTimeRemaining(seconds);
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Shows the level.
@@ -255,8 +257,8 @@ public class MainWindow extends JFrame
     {
         gameScreen.setLevel(level);
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Shows the score.
@@ -268,8 +270,8 @@ public class MainWindow extends JFrame
     {
         gameScreen.setScore(score);
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Shows outfit progress.
@@ -283,8 +285,8 @@ public class MainWindow extends JFrame
     {
         gameScreen.setProgress(completed, minimum);
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Shows a feedback message.

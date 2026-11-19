@@ -12,30 +12,54 @@ import java.io.InputStream;
  * @version November 2026
  */
 
-public class Fonts
+public final class Fonts
 {
-    /** Where the custom font lives on the classpath. */
-    public static final String FONT_PATH = "/fonts/main.ttf";
- 
-    private static final Font BASE = loadBase();
- 
-    /** Big title text. */
-    public static final Font TITLE = BASE.deriveFont(Font.BOLD, 56f);
-    /** Normal text (buttons, dialogue). */
-    public static final Font BODY = BASE.deriveFont(Font.PLAIN, 18f);
-    /** HUD numbers (time, score, level). */
-    public static final Font HUD = BASE.deriveFont(Font.BOLD, 20f);
- 
- 
+    /** Regular weight file. */
+    public static final String REGULAR_PATH = "/fonts/Handjet-Regular.ttf";
+    /** Bold weight file. */
+    public static final String BOLD_PATH = "/fonts/Handjet-Bold.ttf";
+
+    private static final Font REGULAR = load(REGULAR_PATH, Font.PLAIN);
+    private static final Font BOLD = load(BOLD_PATH, Font.BOLD);
+
+
     private Fonts()
     {
         // static only
     }
- 
- 
-    private static Font loadBase()
+
+
+    // ----------------------------------------------------------
+    /**
+     * Regular Handjet.
+     *
+     * @param size
+     *            point size
+     * @return the font
+     */
+    public static Font regular(float size)
     {
-        try (InputStream in = Fonts.class.getResourceAsStream(FONT_PATH))
+        return REGULAR.deriveFont(size);
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * Bold Handjet.
+     *
+     * @param size
+     *            point size
+     * @return the font
+     */
+    public static Font bold(float size)
+    {
+        return BOLD.deriveFont(size);
+    }
+
+
+    private static Font load(String path, int fallbackStyle)
+    {
+        try (InputStream in = Fonts.class.getResourceAsStream(path))
         {
             if (in != null)
             {
@@ -46,6 +70,6 @@ public class Fonts
         {
             // fall through to the fallback
         }
-        return new Font(Font.SANS_SERIF, Font.PLAIN, 12);
+        return new Font(Font.SANS_SERIF, fallbackStyle, 12);
     }
 }

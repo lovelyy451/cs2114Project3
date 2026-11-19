@@ -56,19 +56,22 @@ public class OutputHandler
 
     // ----------------------------------------------------------
     /**
-     * Refreshes the game screen with updated data. The view keeps showing
-     * the player's chosen items until the customer changes, so the
-     * selection is not sent here; see select().
+     * Refreshes the game screen with updated data. The view keeps showing the
+     * player's chosen items until the customer changes, so the selection is not
+     * sent here; see select().
      */
     public void refreshGame()
     {
-        Customer customer = model.getCurrentCustomer(); // null when queue is empty
+        Customer customer = model.getCurrentCustomer(); // null when queue is
+                                                        // empty
         window.setCustomer(customer);
         window.setDialogue(customer == null ? "" : customer.getDialogue());
         window.setTimeRemaining(model.getRemainingTime());
         window.setLevel(model.getCurrentLevel());
         window.setScore(model.getLevelScore());
-        window.setProgress(model.getCompletedOutfits(), model.getMinimumOutfits());
+        window.setProgress(
+            model.getCompletedOutfits(),
+            model.getMinimumOutfits());
         window.repaint();
     }
 
@@ -139,5 +142,18 @@ public class OutputHandler
     public void feedback(String text)
     {
         window.showFeedback(text);
+    }
+
+
+    // ----------------------------------------------------------
+    /**
+     * Displays the hint
+     * 
+     * @param hint
+     *            - the hint
+     */
+    public void addHint(String hint)
+    {
+        window.showHint(hint);
     }
 }

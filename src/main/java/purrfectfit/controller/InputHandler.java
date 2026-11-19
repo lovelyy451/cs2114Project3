@@ -41,7 +41,10 @@ public class InputHandler
      * @param window
      *            - MainWindow
      */
-    public InputHandler(GameModel model, OutputHandler output, MainWindow window)
+    public InputHandler(
+        GameModel model,
+        OutputHandler output,
+        MainWindow window)
     {
         this.model = model;
         this.output = output;
@@ -58,6 +61,8 @@ public class InputHandler
         window.resultsScreen.nextButton.addActionListener(e -> onNext());
         window.resultsScreen.retryButton.addActionListener(e -> onRetry());
         window.gameScreen.setOptionListener(item -> onOptionChosen(item));
+        //window.gameScreen.hintButton.addActionListener(e -> onHintRequested());
+        window.gameScreen.exitButton.addActionListener(e -> onExit());
     }
 
 
@@ -76,6 +81,26 @@ public class InputHandler
     private void onRetry()
     {
         loadLevel(model::retryLevel);
+    }
+
+
+    //private void onHintRequested()
+    //{
+        //if (model.getRemainingHints() > 0)
+        //{
+            //output.addHint(model.requestHint());
+        //}
+        //else
+        //{
+            //output.addHint("No more hints left!");
+        //}
+        //output.refreshGame();
+    //}
+
+
+    private void onExit()
+    {
+        window.closeGame();
     }
 
 
@@ -122,7 +147,8 @@ public class InputHandler
         // Outfit refuses null parts, so only build one when all 3 are picked.
         // submitOutfit(null) makes the model answer INVALID.
         Outfit outfit = null;
-        if (selection[0] != null && selection[1] != null && selection[2] != null)
+        if (selection[0] != null && selection[1] != null
+            && selection[2] != null)
         {
             outfit = new Outfit(selection[0], selection[1], selection[2]);
         }

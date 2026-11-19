@@ -2,12 +2,12 @@ package purrfectfit.view;
 
 // Imports :)
 
-import java.awt.Color;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.RenderingHints;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 /**
@@ -18,60 +18,45 @@ import javax.swing.JPanel;
  * @version November 2026
  */
 
-public class ResultsScreen extends JPanel
+public class ResultsScreen
+    extends JPanel
 {
     /** Go to the next level (shown only after a pass). */
-    public final JButton nextButton = new JButton("Next Level");
+    public final JButton nextButton = new ImageButton("Next Level", Layout.RESULTS_NEXT_BUTTON,
+        Layout.RESULTS_NEXT_BUTTON_FONT_SIZE, Layout.RESULTS_NEXT_BUTTON_COLOR);
     /** Try the level again (shown only after a fail). */
-    public final JButton retryButton = new JButton("Retry");
- 
-    private final JLabel outcomeLabel = new JLabel("", JLabel.CENTER);
-    private final JLabel levelLabel = new JLabel("", JLabel.CENTER);
-    private final JLabel scoreLabel = new JLabel("", JLabel.CENTER);
- 
- 
+    public final JButton retryButton = new ImageButton("Retry", Layout.RESULTS_RETRY_BUTTON,
+        Layout.RESULTS_RETRY_BUTTON_FONT_SIZE, Layout.RESULTS_RETRY_BUTTON_COLOR);
+
+    private final PixelLabel outcomeLabel = new PixelLabel("", Layout.RESULTS_OUTCOME,
+        Fonts.bold(Layout.RESULTS_OUTCOME_FONT_SIZE), Layout.RESULTS_OUTCOME_COLOR,
+        Layout.RESULTS_OUTCOME_ALIGN);
+    private final PixelLabel levelLabel = new PixelLabel("", Layout.RESULTS_LEVEL,
+        Layout.RESULTS_LEVEL_FONT_SIZE, Layout.RESULTS_LEVEL_COLOR, Layout.RESULTS_LEVEL_ALIGN);
+    private final PixelLabel scoreLabel = new PixelLabel("", Layout.RESULTS_SCORE,
+        Layout.RESULTS_SCORE_FONT_SIZE, Layout.RESULTS_SCORE_COLOR, Layout.RESULTS_SCORE_ALIGN);
+
+
     // ----------------------------------------------------------
     /**
      * Create a new ResultsScreen.
+     *
+     * @param music
+     *            the shared music player (for the mute button)
      */
-    public ResultsScreen()
+    public ResultsScreen(Music music)
     {
-        setLayout(new GridBagLayout());
-        setBackground(Assets.PINK_LIGHT);
- 
-        outcomeLabel.setFont(Fonts.TITLE);
-        outcomeLabel.setForeground(Assets.TEXT);
-        levelLabel.setFont(Fonts.HUD);
-        levelLabel.setForeground(Assets.TEXT);
-        scoreLabel.setFont(Fonts.HUD);
-        scoreLabel.setForeground(Assets.TEXT);
- 
-        for (JButton b : new JButton[] { nextButton, retryButton })
-        {
-            b.setFont(Fonts.HUD);
-            b.setBackground(Assets.PINK_DARK);
-            b.setForeground(Color.WHITE);
-            b.setFocusPainted(false);
-        }
- 
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
-        c.insets = new Insets(8, 8, 8, 8);
-        c.gridy = 0;
-        add(outcomeLabel, c);
-        c.gridy = 1;
-        add(levelLabel, c);
-        c.gridy = 2;
-        add(scoreLabel, c);
-        c.gridy = 3;
-        c.ipadx = 40;
-        c.ipady = 10;
-        c.insets = new Insets(24, 8, 8, 8);
-        add(nextButton, c);
-        add(retryButton, c); // same cell: only one is visible at a time
+        setLayout(null);
+        setPreferredSize(new Dimension(Layout.WIDTH, Layout.HEIGHT));
+        add(outcomeLabel);
+        add(levelLabel);
+        add(scoreLabel);
+        add(nextButton);
+        add(retryButton);
+        add(new MuteButton(music, Layout.RESULTS_MUTE_BUTTON));
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Fills in the results and shows the right button.
@@ -91,8 +76,8 @@ public class ResultsScreen extends JPanel
         nextButton.setVisible(passed);
         retryButton.setVisible(!passed);
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Shows the end-of-game message after the last level (no buttons).
@@ -108,8 +93,8 @@ public class ResultsScreen extends JPanel
         nextButton.setVisible(false);
         retryButton.setVisible(false);
     }
- 
- 
+
+
     // ----------------------------------------------------------
     /**
      * Disables the buttons while the next level is being generated.
@@ -121,5 +106,16 @@ public class ResultsScreen extends JPanel
     {
         nextButton.setEnabled(!loading);
         retryButton.setEnabled(!loading);
+    }
+
+
+    @Override
+    protected void paintComponent(Graphics g)
+    {
+        super.paintComponent(g);
+        Image bg = Assets.background();
+        ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+            RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
     }
 }
