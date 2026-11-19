@@ -63,7 +63,6 @@ public class InputHandler
         window.gameScreen.setOptionListener(item -> onOptionChosen(item));
         //window.gameScreen.hintButton.addActionListener(e -> onHintRequested());
         window.gameScreen.exitButton.addActionListener(e -> onExit());
-        window.gameScreen.muteButton.addActionListener(e -> onMute());
     }
 
 
@@ -102,11 +101,6 @@ public class InputHandler
     private void onExit()
     {
         window.closeGame();
-    }
-
-    private void onMute()
-    {
-        window.muteMusic();
     }
 
 
