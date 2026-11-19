@@ -610,6 +610,62 @@ public class Assets
 
     // ----------------------------------------------------------
     /**
+     * Backdrop for the Start and Results screens. Uses
+     * images/title_background.png if you add one; otherwise paints pink
+     * stripes, paw prints in the corners, and a soft white card behind the
+     * text so the words never blend into the stripes.
+     *
+     * @return full-size image
+     */
+    public static Image menuBackdrop()
+    {
+        BufferedImage art = real("title_background.png");
+        if (art != null)
+        {
+            return art;
+        }
+        return cached("menu", () -> {
+            BufferedImage img = new BufferedImage(Layout.WIDTH, Layout.HEIGHT,
+                BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g = smooth(img);
+            g.setColor(PINK_PALE);
+            g.fillRect(0, 0, Layout.WIDTH, Layout.HEIGHT);
+            g.setColor(PINK_LIGHT);
+            for (int x = 0; x < Layout.WIDTH; x += 64)
+            {
+                g.fillRect(x, 0, 32, Layout.HEIGHT);
+            }
+            // paw prints
+            g.setColor(new Color(232, 149, 154, 150));
+            paw(g, 50, 62, 0.9);
+            paw(g, 975, 535, 1.0);
+            paw(g, 975, 290, 0.7);
+            paw(g, 50, 320, 0.7);
+            // card behind the text
+            java.awt.Rectangle c = Layout.MENU_CARD;
+            g.setColor(new Color(255, 255, 255, 225));
+            g.fillRoundRect(c.x, c.y, c.width, c.height, 40, 40);
+            g.setColor(PINK_DARK);
+            g.setStroke(new BasicStroke(4));
+            g.drawRoundRect(c.x, c.y, c.width, c.height, 40, 40);
+            g.dispose();
+            return img;
+        });
+    }
+
+
+    private static void paw(Graphics2D g, int cx, int cy, double k)
+    {
+        g.fill(new Ellipse2D.Double(cx - 20 * k, cy - 4 * k, 40 * k, 32 * k));
+        g.fill(new Ellipse2D.Double(cx - 30 * k, cy - 24 * k, 15 * k, 19 * k));
+        g.fill(new Ellipse2D.Double(cx - 14 * k, cy - 34 * k, 15 * k, 19 * k));
+        g.fill(new Ellipse2D.Double(cx + 1 * k, cy - 34 * k, 15 * k, 19 * k));
+        g.fill(new Ellipse2D.Double(cx + 16 * k, cy - 24 * k, 15 * k, 19 * k));
+    }
+
+
+    // ----------------------------------------------------------
+    /**
      * Layer drawn between the background and the cat (the cat's platform).
      *
      * @return full-size image, or null if there is no art
@@ -716,13 +772,21 @@ public class Assets
 
     // ----------------------------------------------------------
     /**
-     * The blank button shape used for every button.
+     * The blank button shape used for every button (cropped to the visible
+     * part).
      *
      * @return the image, or null if it is missing (buttons paint a fallback)
      */
     public static Image buttonBase()
     {
-        return real("button_base.png");
+        BufferedImage art = real("button_base.png");
+        if (art == null)
+        {
+            return null;
+        }
+        // The file may be a full-size canvas with the button drawn in one
+        // spot, so crop to the visible button before it gets scaled.
+        return cached("buttonbase:cropped", () -> opaqueCrop(art));
     }
 
 

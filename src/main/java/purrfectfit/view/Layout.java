@@ -24,6 +24,9 @@ public final class Layout
     /** Window / art height. */
     public static final int HEIGHT = 576;
 
+    /** White card drawn behind the text on the Start and Results screens. */
+    public static final Rectangle MENU_CARD = new Rectangle(96, 80, 832, 420);
+
     // ---- Start screen ----
     /** Mute button. */
     public static final Rectangle START_MUTE_BUTTON = new Rectangle(926, 8, 84, 28);
@@ -128,7 +131,7 @@ public final class Layout
     /** Largest name font size. */
     public static final int SLOT_NAME_FONT_SIZE = 18;
     /** Name color. */
-    public static final Color SLOT_NAME_COLOR = new Color(0xD65062);
+    public static final Color SLOT_NAME_COLOR = new Color(0xFFFFFF);
     /** Selection outline color. */
     public static final Color SLOT_SELECT_COLOR = new Color(0xD6336C);
     /** Selection outline thickness. */

@@ -113,7 +113,7 @@ public class ResultsScreen
     protected void paintComponent(Graphics g)
     {
         super.paintComponent(g);
-        Image bg = Assets.background();
+        Image bg = Assets.menuBackdrop();
         ((Graphics2D)g).setRenderingHint(RenderingHints.KEY_INTERPOLATION,
             RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         g.drawImage(bg, 0, 0, getWidth(), getHeight(), null);
