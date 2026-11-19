@@ -257,9 +257,9 @@ currently working on using Procreate (stills) and potentially ToonSquid (gifs).
 | Known Model bugs | None reported |
 | External AI integration | Dropped; explained in Reflection |
 | Fallback-based hints | Retained |
-| View through Controller | Reported passing in D3; D4 verification pending |
-| MVP runs without crashing | Reported passing in D3; D4 verification pending |
-| Scope bad-input cases survive | D4 integration verification pending |
+| View through Controller | Reported passing in D4 |
+| MVP runs without crashing | Reported passing in D4 |
+| Scope bad-input cases survive | Integrated and passing |
 | Reflection and final build plan | Documented |
 | Complete file attribution | Retained from D3 |
 | GenAI notes | Completed |
