@@ -70,9 +70,7 @@ The Model has no Swing dependencies. `GameModel` owns gameplay rules, timing, sc
 
 The Controller is responsible for passing player actions to the Model and updating the View. Model tests run without constructing GUI components.
 
-Amelia initially wanted to have the swing timer implemented in the view, but
-upon further consideration the controller now has it implemented. As such,
-the controller now has a swing dependency.
+Amelia initially wanted to have the swing timer implemented in the view, but upon further consideration the controller now has it implemented. As such, the controller now has a swing dependency.
 
 The controller also utilizes methods present within the view to pass back and
 verify with the model, and such is the loop.
@@ -88,7 +86,7 @@ A future improvement would be to organize fallback dialogue into personality-spe
 | Owner | Original unknown | Current status |
 |---|---|---|
 | Lovesh | Separating Model and View | Model implemented independently; integrated |
-| Amelia | Customer visualization, music, visible timer | sample implemented. |
+| Amelia | Customer visualization, music, visible timer | Fully implemented. |
 | Ari | Timer functions and customer randomization | Timer and customer randomization logic implemented easily |
 
 ### Missing or Unverified Functionality
@@ -97,9 +95,6 @@ A future improvement would be to organize fallback dialogue into personality-spe
 - All Model tests pass.
 - No known Model bugs or failing tests remain.
 - Fallback dialogue could be expanded with personality-specific responses and more randomized customer names.
-- Missing some digitally hand-drawn visuals/images, fonts, mand music.
-- Action for exiting the game missing
-- Action for the mute button missing
 - Whether the cat bases are independent of the personalities, and if they aren't, they must become independent of the personalities and randomize accordingly.
 
 ---
@@ -219,11 +214,14 @@ The Model portion will demonstrate that gameplay functions without external AI s
 | `GameScreen.java` | Amelia | Developed and tested |
 | `StartScreen.java` | Amelia | Developed and tested |
 | `ResultsScreen.java` | Amelia | Developed and tested |
-| `ScenePanel.java` | Amelia | Developed and tested |
-| `CategoryPanel.java` | Amelia | Developed and tested |
-| `Assets.java` | Amelia | Developed |
-| `Fonts.java` | Amelia | Developed |
-| `Music.java` | Amelia | Developed |
+| `Layout.java` | Amelia | Developed and tested |
+| `ImageButton.java` | Amelia | Developed and tested |
+| `PixelTextArea.java` | Amelia | Developed and tested |
+| `PixelLabel.java` | Amelia | Developed and tested |
+| `Assets.java` | Amelia | Developed and tested |
+| `Fonts.java` | Amelia | Developed and tested |
+| `Music.java` | Amelia | Developed and tested |
+| `MuteButton.java` | Amelia | Developed and tested |
 
 ### Controller Source and Test Files
 
@@ -238,11 +236,8 @@ The Model portion will demonstrate that gameplay functions without external AI s
 
 **Lovesh:** Used GenAI to make sure code is consistent with each other and everything in rubric is followed.
 
-**Amelia:** Used GenAI to help with the creation of temporary simple view files
-in order for the first Prototype to be visually assessed through the view.
-For our next prototype, I'll have reworked the code to properly reflect my/our
-desired game graphical representation, as well as implement the designs I'm
-currently working on using Procreate (stills) and potentially ToonSquid (gifs).
+**Amelia:** Used GenAI to help with the implementation of the assets
+and music atop the view files that were previously created.
 
 **Ari:** I did not use GenAI.
 
